@@ -1,0 +1,215 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+
+# formalization.yaml (v0.4): repo-root metadata for formalization projects.
+version: "v0.4"
+
+project:
+  name: "GapEntropy"
+  description: >-
+    Lean 4 formalization of the gap-entropy characterization of the order-oblivious
+    instance-wise sample complexity of best-arm identification with unit-variance
+    Gaussian arms, and of a single almost instance-wise optimal algorithm, resolving
+    the two conjectures of Chen and Li (COLT 2016) for measurable Gaussian sampling
+    policies, with the positive iterated-logarithm conventions stated in the
+    manuscript. The policy supplement proves benchmark equality for arbitrary
+    standard Borel private randomness, a lower-bound comparison for
+    history-dependent probability kernels, and completion of explicit abandonment
+    with unchanged sample cost and nondecreasing success probability.
+  authors:
+    - "Jiarui Yao"
+    - "Jiaxi Zhao"
+    - "Xiangxin Zhou"
+  license: "Apache-2.0"
+
+sources:
+  - title: "Gap Entropy and Almost Instance-Wise Optimal Best-Arm Identification"
+    authors:
+      - "Jiarui Yao"
+      - "Jiaxi Zhao"
+      - "Xiangxin Zhou"
+    type: "original-proof"
+    location: "Theorem 2.1, Theorem 2.2, Section 2.3, Appendix H"
+    relationship: "formalizes"
+    note: >-
+      Manuscript included as docs/manuscript.pdf. Appendix I specifies the scope of
+      formal verification and the deliberate differences from the printed proofs;
+      theorem numbers in module docstrings refer to this manuscript.
+  - title: "Open Problem: Best Arm Identification: Almost Instance-Wise Optimality and the Gap Entropy Conjecture"
+    authors:
+      - "Lijie Chen"
+      - "Jian Li"
+    id: "https://proceedings.mlr.press/v49/chen16b.html"
+    type: "article"
+    location: "Definition 3.1, Definition 3.3, Conjecture 3.2, Conjecture 3.5"
+    relationship: "formalizes"
+    author_endorsement: "not-contacted"
+    note: >-
+      COLT 2016 open-problem track, PMLR volume 49. The formalization uses explicit
+      positive conventions for the source's iterated logarithm; see fidelity.
+
+classification:
+  arxiv:
+    - "cs.LG"
+    - "stat.ML"
+    - "math.ST"
+  msc2020:
+    - "62L05"
+    - "62L10"
+    - "68T05"
+    - "94A17"
+
+status:
+  scope: >-
+    Main theorem statements and the Appendix H policy and logarithmic-convention
+    results, with the scope and explicit constants specified in Appendix I.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms:
+    - "propext"
+    - "Classical.choice"
+    - "Quot.sound"
+  main_results:
+    - description: >-
+        Gap-entropy conjecture (Chen–Li Conjecture 3.5, manuscript Theorem 2.1): for
+        every instance and every 0 < δ < 1/10 the order-oblivious benchmark is between
+        (1/5)·H(I)(log(1/δ) + Ent(I)) and 6.4·10¹³·H(I)(log(1/δ) + Ent(I)).
+        The lower bound applies to every globally δ-correct algorithm after
+        averaging its expected sample count over all label permutations.
+      declaration: "GapEntropy.gapEntropyConjecture"
+      file: "GapEntropy/GapEntropyTheorem.lean"
+      sorry_count: 0
+      axioms:
+        - "propext"
+        - "Classical.choice"
+        - "Quot.sound"
+    - description: >-
+        Universal algorithm (manuscript Theorem 2.2): a single δ-correct algorithm
+        receiving only δ and n terminates almost surely on every instance with finite
+        expected sample count at most C_univ·(H(I)(log(1/δ) + Ent(I)) + D·ℓ(D)),
+        where C_univ = 12(10¹² + 1) = 12000000000012, D = Δ_[2]⁻², and
+        ℓ(D) = log(e + log(e + D)), for 0 < δ < 1/10.
+      declaration: "GapEntropy.universalEntropyUpperBound"
+      file: "GapEntropy/UniversalTheorem.lean"
+      sorry_count: 0
+      axioms:
+        - "propext"
+        - "Classical.choice"
+        - "Quot.sound"
+    - description: >-
+        Almost instance-wise optimality (Chen–Li Conjecture 3.2) with the manuscript's
+        smooth positive iterated logarithm.
+      declaration: "GapEntropy.almostInstanceWiseOptimality"
+      file: "GapEntropy/UniversalTheorem.lean"
+      sorry_count: 0
+      axioms:
+        - "propext"
+        - "Classical.choice"
+        - "Quot.sound"
+    - description: >-
+        Almost instance-wise optimality with the positive truncation
+        g(Δ) = max(1, log log(1/Δ)) for 0 < Δ < 1 and g(1) = 1, evaluated
+        at the smallest positive gap Δ_[2].
+      declaration: "GapEntropy.positiveSourceAlmostInstanceWiseOptimality"
+      file: "GapEntropy/UniversalTheorem.lean"
+      sorry_count: 0
+      axioms:
+        - "propext"
+        - "Classical.choice"
+        - "Quot.sound"
+    - description: >-
+        Policy class (manuscript Appendix H.3): the benchmark over algorithms with
+        arbitrary standard Borel private probability spaces equals the benchmark over
+        Gaussian-tape policies.
+      declaration: "GapEntropy.PolicyRepresentations.standardBenchmark_eq"
+      file: "GapEntropy/PolicyRepresentations/StandardAlgorithms.lean"
+      sorry_count: 0
+      axioms:
+        - "propext"
+        - "Classical.choice"
+        - "Quot.sound"
+
+fidelity:
+  divergences: >-
+    Algorithms are measurable functions of a private Gaussian seed tape and the finite
+    observation history (GapEntropy/Model.lean). In this sample-or-return model,
+    expected sample counts are unconditional integrals in ℝ≥0∞, and a path that
+    never returns costs ∞. The theorems assume the stated instance and observation
+    model and 0 < δ < 1/10; concentration, change-of-measure, and execution bounds
+    are proved internally. GapEntropy.PolicyRepresentations proves benchmark
+    equality for arbitrary standard Borel private randomness. History-dependent
+    probability-kernel algorithms satisfy the same permutation-averaged lower
+    bound; equality of the two infima over algorithm families is not claimed.
+    Completion of explicit abandonment preserves sample cost and does not decrease
+    success probability. Appendix I documents the weaker 1/5 form of Theorem B.1,
+    permutation-averaged arm counts, increasing-event Bernoulli domination, and
+    deterministic sample padding within each formal run. The source's two-arm
+    term Δ_[2]⁻² log log(1/Δ_[2]) is negative for e⁻¹ < Δ_[2] < 1 and undefined
+    at Δ_[2] = 1. The formal statements use ℓ(D) = log(e + log(e + D)) or
+    g(Δ) = max(1, log log(1/Δ)) for 0 < Δ < 1, with g(1) = 1. These satisfy
+    g(Δ) ≤ ℓ(Δ⁻²) ≤ 7g(Δ) (GapEntropy/IteratedLogConvention.lean). For
+    0 < Δ_[2] ≤ e⁻ᵉ the upper bound uses the raw source expression up to a
+    universal constant; the remaining gap regime has a benchmark-only bound
+    (GapEntropy/GapRegimes.lean; Corollary H.7). The literal untruncated
+    transcription GapEntropy.SourceConjecture32Literal is stated but not proved.
+
+automation:
+  methods:
+    - method: "agent"
+      notes: >-
+        The manuscript's AI-use statement reports that the main mathematical
+        derivations and Lean formalization and verification work primarily used
+        gpt-6-astra, followed by checks with claude-fable-5.1. These model checks
+        are distinct from the Lean kernel checks.
+
+review:
+  status: "agent-reviewed"
+  notes: >-
+    Explicit transcriptions of the four main statements are kernel-checked against
+    the proved declarations in Verification/. They share the instance and
+    operational-model definitions. The recursive axiom audit includes private
+    declarations in the main library and policy supplement. The reference Lean
+    checker replays the complete Verification import closure in a fresh kernel
+    environment. AI cross-review is reported in the manuscript; no external human
+    review has been completed.
+
+alignment:
+  namespaces:
+    - "GapEntropy"
+    - "GapEntropy.PolicyRepresentations"
+  statements:
+    - source: "Chen–Li Definition 3.1 (order-oblivious instance-wise lower bound)"
+      lean: "GapEntropy.benchmark"
+      module: "GapEntropy.Problem"
+      status: "defined"
+    - source: "Chen–Li Definition 3.3 (gap entropy)"
+      lean: "GapEntropy.Instance.gapEntropy"
+      module: "GapEntropy.Instance"
+      status: "defined"
+    - source: "Chen–Li Conjecture 3.5 / manuscript Theorem 2.1"
+      lean: "GapEntropy.gapEntropyConjecture"
+      module: "GapEntropy.GapEntropyTheorem"
+      status: "proved"
+    - source: "Manuscript Theorem 2.2"
+      lean: "GapEntropy.universalEntropyUpperBound"
+      module: "GapEntropy.UniversalTheorem"
+      status: "proved"
+    - source: "Chen–Li Conjecture 3.2 (smooth positive truncation)"
+      lean: "GapEntropy.almostInstanceWiseOptimality"
+      module: "GapEntropy.UniversalTheorem"
+      status: "proved"
+    - source: "Chen–Li Conjecture 3.2 (max-with-one truncation)"
+      lean: "GapEntropy.positiveSourceAlmostInstanceWiseOptimality"
+      module: "GapEntropy.UniversalTheorem"
+      status: "proved"
+    - source: "Manuscript Appendix H.3 (benchmark over standard Borel private randomness)"
+      lean: "GapEntropy.PolicyRepresentations.standardBenchmark_eq"
+      module: "GapEntropy.PolicyRepresentations.StandardAlgorithms"
+      status: "proved"
+    - source: "Explicit transcriptions of the four main statements with shared foundations"
+      lean: "GapEntropy.StatementChecks.checkedGapEntropy, checkedUniversal, checkedAlmostOptimal, checkedPositiveAlmostOptimal"
+      module: "Verification.CheckStatements"
+      status: "proved"
+
+acknowledgements: >-
+  Thank you to the authors of Lean 4, Mathlib, Lake, and elan, and to Lijie Chen and
+  Jian Li for posing the problem.

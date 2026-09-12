@@ -1,0 +1,19 @@
+name = "GapEntropy"
+version = "0.1.0"
+defaultTargets = ["GapEntropy", "Verification"]
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+git = "https://github.com/leanprover-community/mathlib4.git"
+rev = "v4.33.1"
+
+[[lean_lib]]
+name = "GapEntropy"
+leanOptions = { autoImplicit = false, warningAsError = true }
+globs = ["GapEntropy", "GapEntropy.+"]
+
+[[lean_lib]]
+name = "Verification"
+leanOptions = { autoImplicit = false, warningAsError = true }
+globs = ["Verification", "Verification.+"]
